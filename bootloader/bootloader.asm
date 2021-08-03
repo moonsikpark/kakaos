@@ -1,42 +1,161 @@
-[ORG 0x00]
+[ORG 0X00]
 [BITS 16]
 
-SECTION .text
+SECTION .TEXT
 
-JMP 0x07C0:START
+JMP 0X07C0:START
+
+IMAGESIZE: DW 1024 ; Size of Operating System
 
 START:
-    mov ax, 0x07c0
-    mov ds, ax
-    mov ax, 0xB800
-    mov es, ax
+    MOV AX, 0X07C0 ; Boot loader address
+    MOV DS, AX
+    MOV AX, 0XB800 ; Video memory address
+    MOV ES, AX
 
-    mov si, 0
+    MOV AX, 0X0000 ; Stack segment address
+    MOV SS, AX
+    MOV SP, 0XFFFE
+    MOV BP, 0XFFFE
+
+    MOV SI, 0
 
 .CLEARSCREEN:
-    mov byte[es:si], 0
-    mov byte[es:si+1], 0x0A
-    add si, 2
-    cmp si, 80 * 25 * 2
-    jl .CLEARSCREEN
+    MOV BYTE[ES:SI], 0
+    MOV BYTE[ES:SI+1], 0X0A ; Video memory attribute: black & green
+    ADD SI, 2
+    CMP SI, 80 * 25 * 2 ; Screen size
+    JL .CLEARSCREEN
 
-    mov si, 0
-    mov di, 0
+    PUSH LOADERSTARTMSG
+    PUSH 0 ; X AXIS
+    PUSH 0 ; Y AXIS
+    CALL PRINTMSG
+    ADD SP, 6
 
-.PRINTMSG:
-    mov cl, byte[si + LOADERSTARTMSG]
-    cmp cl, 0
-    je .MSGEND
-    mov byte[es:di], cl
-    add si, 1
-    add di, 2
-    jmp .PRINTMSG
+    PUSH IMAGELOADMSG
+    PUSH 0 ; X AXIS
+    PUSH 1 ; Y AXIS
+    CALL PRINTMSG
+    ADD SP, 6
 
-.MSGEND:
+RESETDISK: ; Reset disk before load
+    MOV AX, 0
+    MOV DL, 0
+    INT 0X13
+    JC DISKERRORHANDLER
+
+    MOV SI, 0X1000
+    MOV ES, SI
+    MOV BX, 0X00
+    MOV DI, WORD[IMAGESIZE]
+
+LOADDATA: ; Read data from disk
+    CMP DI, 0
+    JE LOADEND
+    SUB DI, 0X1
+
+    ; Call BIOS READ function
+    MOV AH, 0X02
+    MOV AL, 0X1
+    MOV CH, BYTE[OS_TRACK]
+    MOV CL, BYTE[OS_SECTOR]
+    MOV DH, BYTE[OS_HEAD]
+
+    MOV DL, 0X00
+    INT 0X13
+    JC DISKERRORHANDLER
+    
+    ADD SI, 0X0020
+
+    MOV ES, SI
+    MOV AL, BYTE[OS_SECTOR]
+    ADD AL, 0X01
+    MOV BYTE[OS_SECTOR], AL
+    CMP AL, 19
+    JL LOADDATA
+
+    XOR BYTE[OS_HEAD], 0X01
+    MOV BYTE[OS_SECTOR], 0X01
+    CMP BYTE[OS_HEAD], 0X00
+
+    JNE LOADDATA
+
+    ADD BYTE[OS_TRACK], 0X01
+    JMP LOADDATA
+
+LOADEND:
+    PUSH LOADENDMSG
+    PUSH 0
+    PUSH 2
+    CALL PRINTMSG
+    ADD SP, 6
+
+    JMP 0X1000:0X0000
+
+DISKERRORHANDLER:
+    PUSH DISKERRORMSG
+    PUSH 0
+    PUSH 2
+    CALL PRINTMSG
+
     JMP $
 
-LOADERSTARTMSG: DB "KAKAOS Boot Loader"
+PRINTMSG:
+    PUSH BP
+    MOV BP, SP
+    PUSH ES
+    PUSH SI
+    PUSH DI
+    PUSH AX
+    PUSH CX
+    PUSH DX
 
-TIMES 510 - ($ - $$) DB 0x00
-DB 0x55
-DB 0xAA
+    MOV AX, 0XB800
+    MOV ES, AX
+
+    MOV AX, WORD[BP+4] ; Y AXIS
+    MOV SI, 160
+    MUL SI
+    MOV DI, AX
+
+    MOV AX, WORD[BP+6] ; X AXIS
+    MOV SI, 2
+    MUL SI
+    ADD DI, AX
+
+    MOV SI, WORD[BP+8] ; MESSAGE
+
+.MSGPRINTLOOP:
+    MOV CL, BYTE[SI]
+    CMP CL, 0
+    JE .MSGEND
+    MOV BYTE[ES:DI], CL
+
+    ADD SI, 1
+    ADD DI, 2
+
+    JMP .MSGPRINTLOOP
+
+.MSGEND:
+    POP DX
+    POP CX
+    POP AX
+    POP DI
+    POP SI
+    POP ES
+    POP BP
+    RET
+
+LOADERSTARTMSG: DB "KAKAOS Boot Loader", 0
+DISKERRORMSG: DB "Disk Error!", 0
+IMAGELOADMSG: DB "Loading Operating System Image...", 0
+LOADENDMSG: DB "Image Load Complete.", 0
+
+OS_SECTOR: DB 0X02
+OS_HEAD: DB 0X00
+OS_TRACK: DB 0X00
+
+TIMES 510 - ($ - $$) DB 0X00
+DB 0X55
+DB 0XAA
