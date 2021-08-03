@@ -8,10 +8,10 @@ build_bootloader:
 build_prekernel:
 	make -C prekernel
 
-make_image: build_bootloader build_prekernel
+make_image: bootloader/bootloader.bin prekernel/prekernel.bin
 	@echo Building disk image...
 
-	cat bootloader/bootloader.bin prekernel/prekernel.bin > os.img
+	cat $^ > os.img
 
 clean:
 	make -C bootloader clean

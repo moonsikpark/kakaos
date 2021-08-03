@@ -1,7 +1,7 @@
 all: prekernel.bin
 
-prekernel.bin: prekernel.asm
-	nasm -o prekernel.bin prekernel.asm
+prekernel.bin: entrypoint.s
+	nasm -o prekernel.bin $<
 
 clean:
-	rm -f prekernel.asm
+	rm -f prekernel.bin
