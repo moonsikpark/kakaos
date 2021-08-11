@@ -1,19 +1,27 @@
-all: build_bootloader build_prekernel make_image
+all: bootloader/bootloader.bin prekernel/prekernel.bin image
 
-build_bootloader:
+bootloader/bootloader.bin:
 	@echo Building bootloader...
-
+	
 	make -C bootloader
 
-build_prekernel:
+	@echo Bootloader build done.
+
+prekernel/prekernel.bin:
+	@echo Building prekernel...
+	
 	make -C prekernel
 
-make_image: bootloader/bootloader.bin prekernel/prekernel.bin
+	@echo Prekernel build done.
+
+image: bootloader/bootloader.bin prekernel/prekernel.bin
 	@echo Building disk image...
 
-	cat $^ > os.img
+	make -C build
 
+	@echo Disk image build done.
+	
 clean:
 	make -C bootloader clean
 	make -C prekernel clean
-	rm -f os.img
+	make -C build clean
