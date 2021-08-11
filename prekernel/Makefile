@@ -1,7 +1,21 @@
+NASM = nasm
+GCC = gcc -c -m32 -ffreestanding -std=c99
+LD = ld -T linker_script/script.x -nostdlib
+
 all: prekernel.bin
 
-prekernel.bin: entrypoint.s
-	nasm -o prekernel.bin $<
+entrypoint.bin: entrypoint.s
+	$(NASM) -o $@ $<
 
+main.o: main.c
+	$(GCC) -o $@ $<
+
+main.bin: main.o
+	$(LD) -o $@ $^
+
+prekernel.bin: entrypoint.bin main.bin
+	cat $^ > $@
+		
 clean:
-	rm -f prekernel.bin
+	rm -f *.bin
+	rm -f *.o
