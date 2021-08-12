@@ -1,7 +1,7 @@
 #ifndef __FRAMEBUFFER_H__
 #define __FRAMEBUFFER_H__
 
-#define FRAMEBUFFER_START (framebuffer_pos_t *) 0xB8000
+#define FRAMEBUFFER_START (framebuffer_pos_t *)0xB8000
 
 typedef struct framebuffer_pos_t
 {

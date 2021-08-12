@@ -4,5 +4,6 @@
 void main()
 {
     framebuffer_print_string(0, 5, "Prekernel started.");
-    while(1);
+    while (1)
+        ;
 }
