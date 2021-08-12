@@ -1,0 +1,55 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "build",
+        "type": "shell",
+        "command": [
+            "make",
+            "all"
+        ]
+      },
+      {
+        "label": "run",
+        "type": "shell",
+        "dependsOn": "build",
+        "command": "qemu-system-x86_64 -s -S -curses -drive file=build/output/disk.img,index=0,if=floppy,format=raw -serial mon:stdio -pidfile /tmp/qemu-kakaos.pid",
+        "isBackground": true,
+        "problemMatcher": [
+          {
+            "pattern": [
+              {
+                "regexp": ".",
+                "file": 1,
+                "location": 2,
+                "message": 3
+              }
+            ],
+            "background": {
+              "activeOnStart": true,
+              "beginsPattern": ".",
+              "endsPattern": ".",
+            }
+          }
+        ]
+      },
+      {
+        "label": "stopvm",
+        "type": "shell",
+        "command": [
+          "pkill",
+          "-F",
+          "/tmp/qemu-kakaos.pid"
+        ]
+      },
+      {
+        "label": "clean",
+        "type": "shell",
+        "dependsOn": "stopvm",
+        "command": [
+          "make",
+          "clean"
+        ]
+      }
+    ]
+  }

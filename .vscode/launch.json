@@ -1,0 +1,15 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+        "name": "Run with QEMU",
+        "type": "cppdbg",
+        "request": "launch",
+        "program": "python", // Dummy program not to trigger gdb.
+        "miDebuggerServerAddress": "localhost:1234",
+        "cwd": "${workspaceRoot}",
+        "preLaunchTask": "run",
+        "postDebugTask": "clean"
+        }
+    ]
+}
