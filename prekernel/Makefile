@@ -1,6 +1,6 @@
 NASM = nasm
 GCC = gcc -c -m32 -ffreestanding -std=c99
-LD = ld -T linker_script/script.x -nostdlib
+LD = ld -T linker_script/script.lds -nostdlib
 
 all: prekernel.bin
 
