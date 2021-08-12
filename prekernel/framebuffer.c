@@ -19,13 +19,37 @@ uint16_t framebuffer_pos_topos(framebuffer_pos_t *pos)
 
 framebuffer_pos_t *framebuffer_get_cursor()
 {
+    uint16_t ret = 0;
     outb(0x3D4, 0x0F);
-    int posX = (uint8_t)inb(0x3D5);
+    ret |= inb(0x3D5);
     outb(0x3D4, 0x0E);
-    int posY = (uint8_t)inb(0x3D5);
+    ret |= ((uint16_t)inb(0x3D5)) << 8;
+
+    int posX = ret % 80;
+    int posY = ret / 80;
 
     framebuffer_pos_t *pos = framebuffer_pos_frompos(posX, posY);
     return pos;
+}
+
+framebuffer_pos_t *framebuffer_next_line(framebuffer_pos_t *pos)
+{
+    framebuffer_pos_t *start = FRAMEBUFFER_START;
+    uint16_t diff = (uint16_t)(pos - start);
+    if (diff <= 0)
+    {
+        return start;
+    }
+    else if (diff > 80 * 24)
+    {
+        framebuffer_scroll();
+        return framebuffer_pos_frompos(0, 25);
+    }
+    else
+    {
+        uint16_t current_line = diff / 80 + 1;
+        return framebuffer_pos_frompos(0, current_line);
+    }
 }
 
 void framebuffer_move_cursor(framebuffer_pos_t *pos)
@@ -64,12 +88,26 @@ void framebuffer_scroll()
     framebuffer_move_cursor(framebuffer_pos_frompos(0, 25));
 }
 
-void framebuffer_print_string(int posX, int posY, const char *string)
+void framebuffer_print_string(framebuffer_pos_t *pos, const char *string)
 {
-    framebuffer_pos_t *pos = framebuffer_pos_frompos(posX, posY);
-
-    for (int i = 0; string[i] != 0; i++)
+    int i;
+    for (i = 0; string[i] != '\0'; i++)
     {
         pos[i].character = string[i];
     }
+    framebuffer_move_cursor(pos + i);
+}
+
+void framebuffer_print_after(const char *string)
+{
+    framebuffer_pos_t *pos = framebuffer_get_cursor();
+
+    framebuffer_print_string(pos, string);
+}
+
+void framebuffer_print_nextline(const char *string)
+{
+    framebuffer_pos_t *pos = framebuffer_next_line(framebuffer_get_cursor());
+
+    framebuffer_print_string(pos, string);
 }

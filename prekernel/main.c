@@ -3,7 +3,7 @@
 
 void main()
 {
-    framebuffer_print_string(0, 5, "Prekernel started.");
+    framebuffer_print_nextline("Prekernel started.");
     while (1)
         ;
 }

@@ -15,6 +15,8 @@ framebuffer_pos_t *framebuffer_get_cursor();
 void framebuffer_move_cursor(framebuffer_pos_t *pos);
 void framebuffer_clear_screen();
 void framebuffer_scroll();
-void framebuffer_print_string(int posX, int posY, const char *string);
+void framebuffer_print_string(framebuffer_pos_t *pos, const char *string);
+void framebuffer_print_after(const char *string);
+void framebuffer_print_nextline(const char *string);
 
 #endif /*__FRAMEBUFFER_H__*/
