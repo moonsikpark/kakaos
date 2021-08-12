@@ -57,7 +57,7 @@ void framebuffer_clear_screen()
 void framebuffer_scroll()
 {
     framebuffer_pos_t *pos = FRAMEBUFFER_START;
-    for (int i = 80; i < 24 * 80; i++)
+    for (int i = 0; i < 24 * 80; i++)
     {
         pos[i] = pos[i + 80];
     }
