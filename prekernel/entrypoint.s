@@ -8,6 +8,21 @@ START:
     MOV DS, AX
     MOV ES, AX
 
+    ; Activate A20 Gate using BIOS service.
+    MOV AX, 0X2401
+    INT 0X15
+
+    JC .A20GATE_ERROR
+    JMP .A20GATE_SUCCESS
+
+.A20GATE_ERROR:
+    IN AL, 0X92
+    OR AL, 0X02
+    AND AL, 0XFE
+    OUT 0X92, AL
+
+
+.A20GATE_SUCCESS:
     CLI
     LGDT [GDTR]
     ; PG=0, CD=1, NW=0, AM=0, WP=0, 
