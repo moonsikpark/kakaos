@@ -22,7 +22,7 @@ START:
 
 .CLEARSCREEN:
     MOV BYTE[ES:SI], 0
-    MOV BYTE[ES:SI+1], 0X0A ; Video memory attribute: black & green
+    MOV BYTE[ES:SI+1], 0X0F ; Video memory attribute: black & white
     ADD SI, 2
     CMP SI, 80 * 25 * 2 ; Screen size
     JL .CLEARSCREEN
