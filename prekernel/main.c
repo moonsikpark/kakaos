@@ -8,28 +8,22 @@ void main()
 
     uint16_t ret = 0;
     //TODO: printf MINIMUM_MEMORY instead of hardcoding.
-    framebuffer_print_nextline("Checking whether memory is over 64MB...");
+    framebuffer_print_pflog("Checking whether memory is over 64MB");
     ret = init_verify_minimum_memory();
-    if (ret == 0)
-    {
-        framebuffer_print_after("Success.");
-    }
-    else
+    framebuffer_print_pflog_pf(ret);
+    if (ret)
     {
         //TODO: Implement printf and show current memory in megabytes (from ret).
-        framebuffer_print_after("Failed. Memory too small.");
+        framebuffer_print_nextline("Memory too small.");
         goto loop;
     }
 
-    framebuffer_print_nextline("Initializing kernel area...");
+    framebuffer_print_pflog("Initializing kernel area");
     ret = (uint16_t)init_kernel64_area_init();
-    if (ret == 0)
+    framebuffer_print_pflog_pf(ret);
+    if (ret)
     {
-        framebuffer_print_after("Success.");
-    }
-    else
-    {
-        framebuffer_print_after("Failed.");
+        framebuffer_print_nextline("Failed to initialize kernel area.");
         goto loop;
     }
 

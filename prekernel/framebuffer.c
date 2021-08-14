@@ -98,6 +98,19 @@ void framebuffer_print_string(framebuffer_pos_t *pos, const char *string)
     framebuffer_move_cursor(pos + i);
 }
 
+void framebuffer_print_colorstring(framebuffer_pos_t *pos, uint8_t forecolor, uint8_t backcolor, const char *string)
+{
+    uint8_t attrib = (forecolor << 4) | (backcolor & 0x0F);
+
+    int i;
+    for (i = 0; string[i] != '\0'; i++)
+    {
+        pos[i].character = string[i];
+        pos[i].attribute = attrib;
+    }
+    framebuffer_move_cursor(pos + i);
+}
+
 void framebuffer_print_after(const char *string)
 {
     framebuffer_pos_t *pos = framebuffer_get_cursor();
@@ -110,4 +123,29 @@ void framebuffer_print_nextline(const char *string)
     framebuffer_pos_t *pos = framebuffer_next_line(framebuffer_get_cursor());
 
     framebuffer_print_string(pos, string);
+}
+
+void framebuffer_print_pflog(const char *string)
+{
+    framebuffer_print_nextline(string);
+    framebuffer_pos_t *current = framebuffer_get_cursor();
+    framebuffer_pos_t *pos = framebuffer_next_line(framebuffer_get_cursor());
+    pos -= 6;
+    for (; current != pos; current++)
+    {
+        framebuffer_print_string(current, ".");
+    }
+    framebuffer_print_string(pos, "[    ]");
+}
+void framebuffer_print_pflog_pf(int result)
+{
+    framebuffer_pos_t *current = framebuffer_get_cursor() - 5;
+    if (result == 0)
+    {
+        framebuffer_print_colorstring(current, FRAMEBUFFER_COLOR_GREEN, FRAMEBUFFER_COLOR_BLACK, "PASS");
+    }
+    else
+    {
+        framebuffer_print_colorstring(current, FRAMEBUFFER_COLOR_RED, FRAMEBUFFER_COLOR_BLACK, "FAIL");
+    }
 }
