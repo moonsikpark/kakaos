@@ -1,5 +1,6 @@
 #include "types.h"
 #include "common.h"
+#include "framebuffer.h"
 
 const uint16_t MINIMUM_MEMORY = 64; // 64MB
 
@@ -19,15 +20,17 @@ uint8_t inb(uint16_t port)
 
 uint16_t init_verify_minimum_memory()
 {
+    // Start from 0x100000 (1MB)
     uint16_t memory = 1;
-    uint16_t *addr = (uint16_t *)0x100000;
+    uint32_t *addr = (uint32_t *)0x100000;
 
-    while (memory > MINIMUM_MEMORY)
+    for (; memory < MINIMUM_MEMORY; memory++)
     {
         *addr = 0xdeadbeef;
         if (*addr != 0xdeadbeef)
+        {
             return memory;
-        memory += 1;
+        }
         addr += (0x100000 / 4);
     }
     return (uint16_t)0;
