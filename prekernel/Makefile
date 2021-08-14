@@ -8,7 +8,7 @@ OBJS =	main.o \
 
 all: prekernel.bin
 
-entrypoint.bin: entrypoint.s
+entrypoint.bin: entrypoint.S
 	$(NASM) -o $@ $<
 
 %.o: %.c

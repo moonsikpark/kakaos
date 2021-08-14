@@ -1,6 +1,6 @@
 all: bootloader.bin
 
-bootloader.bin: bootloader.asm
+bootloader.bin: bootloader.S
 	nasm -o $@ $^
 
 clean:
