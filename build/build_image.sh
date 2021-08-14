@@ -1,10 +1,14 @@
 #!/usr/bin/env bash
 BOOTLOADER="../bootloader/bootloader.bin"
 PREKERNEL="../prekernel/prekernel.bin"
-OUTPUT="output/disk.img"
+OUTPUT_DIR="output/"
+OUTPUT_NAME="disk.img"
+OUTPUT=$OUTPUT_DIR$OUTPUT_NAME
 PADDED_PREKERNEL="../prekernel/padded_prekernel.bin"
 PREKERNEL_SIZE=$(du -b $PREKERNEL | awk '{print $1}')
 SECTOR_NEEDED=$(($PREKERNEL_SIZE / 512 + 1))
+
+mkdir -p $OUTPUT_DIR
 
 # Pad prekernel
 dd if=/dev/zero of=$PADDED_PREKERNEL bs=512 count=$SECTOR_NEEDED
