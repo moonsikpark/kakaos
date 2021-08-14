@@ -27,6 +27,18 @@ void main()
         goto loop;
     }
 
+    framebuffer_print_nextline("CPU Information: ");
+    init_cpuid_print_brand_and_model();
+
+    framebuffer_print_pflog("Checking amd64 support");
+    ret = (uint16_t)init_cpuid_check_amd64_support();
+    framebuffer_print_pflog_pf(ret);
+    if (ret)
+    {
+        framebuffer_print_nextline("Processor does not support amd64.");
+        goto loop;
+    }
+
 loop:
     while (1)
         ;

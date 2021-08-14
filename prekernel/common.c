@@ -50,3 +50,69 @@ int init_kernel64_area_init()
     }
     return 0;
 }
+
+void init_cpuid_print_brand_and_model()
+{
+    uint32_t output[4];
+    __asm__ __volatile__("mov $0x0, %eax");
+    __asm__ __volatile__("cpuid");
+    __asm__ __volatile__("mov %%ebx, %0"
+                         : "=r"(output[0]));
+    __asm__ __volatile__("mov %%edx, %0"
+                         : "=r"(output[1]));
+    __asm__ __volatile__("mov %%ecx, %0"
+                         : "=r"(output[2]));
+    output[3] = 0x0;
+    framebuffer_print_after((const char *)output);
+    framebuffer_print_after(" ");
+
+    __asm__ __volatile__("mov $0x80000002 , %eax");
+    __asm__ __volatile__("cpuid");
+    __asm__ __volatile__("mov %%eax, %0"
+                         : "=r"(output[0]));
+    __asm__ __volatile__("mov %%ebx, %0"
+                         : "=r"(output[1]));
+    __asm__ __volatile__("mov %%ecx, %0"
+                         : "=r"(output[2]));
+    __asm__ __volatile__("mov %%edx, %0"
+                         : "=r"(output[3]));
+    framebuffer_print_after((const char *)output);
+
+    __asm__ __volatile__("mov $0x80000003 , %eax");
+    __asm__ __volatile__("cpuid");
+    __asm__ __volatile__("mov %%eax, %0"
+                         : "=r"(output[0]));
+    __asm__ __volatile__("mov %%ebx, %0"
+                         : "=r"(output[1]));
+    __asm__ __volatile__("mov %%ecx, %0"
+                         : "=r"(output[2]));
+    __asm__ __volatile__("mov %%edx, %0"
+                         : "=r"(output[3]));
+    framebuffer_print_after((const char *)output);
+
+    __asm__ __volatile__("mov $0x80000004 , %eax");
+    __asm__ __volatile__("cpuid");
+    __asm__ __volatile__("mov %%eax, %0"
+                         : "=r"(output[0]));
+    __asm__ __volatile__("mov %%ebx, %0"
+                         : "=r"(output[1]));
+    __asm__ __volatile__("mov %%ecx, %0"
+                         : "=r"(output[2]));
+    __asm__ __volatile__("mov %%edx, %0"
+                         : "=r"(output[3]));
+    framebuffer_print_after((const char *)output);
+}
+
+int init_cpuid_check_amd64_support()
+{
+    uint32_t output;
+    __asm__ __volatile__("mov $0x80000001, %eax");
+    __asm__ __volatile__("cpuid");
+    __asm__ __volatile__("mov %%edx, %0"
+                         : "=r"(output));
+    if (output & (1 << 29))
+    {
+        return 0;
+    }
+    return 1;
+}
