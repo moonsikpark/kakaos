@@ -23,3 +23,4 @@ prekernel.bin: entrypoint.bin main.bin
 clean:
 	rm -f *.bin
 	rm -f *.o
+	rm -f *.s

@@ -5,3 +5,4 @@ bootloader.bin: bootloader.S
 
 clean:
 	rm -f bootloader.bin
+	rm -f *.s
