@@ -34,16 +34,15 @@ framebuffer_pos_t *framebuffer_get_cursor()
 
 framebuffer_pos_t *framebuffer_next_line(framebuffer_pos_t *pos)
 {
-    framebuffer_pos_t *start = FRAMEBUFFER_START;
-    uint16_t diff = (uint16_t)(pos - start);
+    uint16_t diff = framebuffer_pos_topos(pos);
     if (diff <= 0)
     {
-        return start;
+        return FRAMEBUFFER_START;
     }
-    else if (diff > 80 * 24)
+    else if (diff >= 80 * 24)
     {
         framebuffer_scroll();
-        return framebuffer_pos_frompos(0, 25);
+        return framebuffer_pos_frompos(0, 24);
     }
     else
     {
@@ -85,7 +84,7 @@ void framebuffer_scroll()
     {
         pos[i] = pos[i + 80];
     }
-    framebuffer_move_cursor(framebuffer_pos_frompos(0, 25));
+    framebuffer_move_cursor(framebuffer_pos_frompos(0, 24));
 }
 
 void framebuffer_print_string(framebuffer_pos_t *pos, const char *string)
@@ -113,7 +112,14 @@ void framebuffer_print_colorstring(framebuffer_pos_t *pos, uint8_t forecolor, ui
 
 void framebuffer_print_after(const char *string)
 {
+    // TODO: framebuffer_print_after() does not scroll on last line properly.
     framebuffer_pos_t *pos = framebuffer_get_cursor();
+
+    uint16_t diff = framebuffer_pos_topos(pos);
+    if (diff >= 80 * 25)
+    {
+        pos = framebuffer_next_line(pos);
+    }
 
     framebuffer_print_string(pos, string);
 }
