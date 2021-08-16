@@ -5,7 +5,8 @@ SECTION .TEXT
 
 JMP 0X07C0:START
 
-IMAGESIZE: DW 1024 ; Size of Operating System
+SIZE_ALL: DW 1024 ; Size of prekernel and kernel
+SIZE_PREKERNEL: DW 1024 ; Size of prekernel
 
 START:
     MOV AX, 0X07C0 ; Boot loader address
@@ -48,7 +49,7 @@ RESETDISK: ; Reset disk before load
     MOV SI, 0X1000
     MOV ES, SI
     MOV BX, 0X00
-    MOV DI, WORD[IMAGESIZE]
+    MOV DI, WORD[SIZE_ALL]
 
 LOADDATA: ; Read data from disk
     CMP DI, 0

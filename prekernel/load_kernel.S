@@ -1,0 +1,22 @@
+[BITS 32]
+
+GLOBAL load_kernel
+
+load_kernel:
+    MOV EAX, CR4
+    OR EAX, 0X20
+    MOV CR4, EAX
+    MOV EAX, 0X100000
+    MOV CR3, EAX
+    
+    MOV ECX, 0XC0000080
+    RDMSR
+    OR EAX, 0X0100
+    WRMSR
+    MOV EAX, CR0
+    OR EAX, 0XE0000000
+    XOR EAX, 0X60000000
+    MOV CR0, EAX
+    JMP 0X08:0X200000
+    
+    JMP $

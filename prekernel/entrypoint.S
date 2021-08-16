@@ -29,11 +29,11 @@ START:
     ; NE=1, ET=1, TS=1, EM=0, MP=1, PE=1
     MOV EAX, 0X4000003B
     MOV CR0, EAX
-    JMP DWORD 0X08: (PROTECTEDMODE - $$ + 0X10000)
+    JMP DWORD 0X18: (PROTECTEDMODE - $$ + 0X10000)
 
 [BITS 32]
 PROTECTEDMODE:
-    MOV AX, 0X10
+    MOV AX, 0X20
     MOV DS, AX
     MOV ES, AX
     MOV FS, AX
@@ -49,7 +49,7 @@ PROTECTEDMODE:
     CALL PRINTMESSAGE
     ADD ESP, 12
 
-    JMP DWORD 0x08: 0x10200
+    JMP DWORD 0x18: 0x10200
 
 PRINTMESSAGE:
     PUSH EBP
@@ -108,6 +108,22 @@ GDT:
         DB 0X00
         DB 0X00
         DB 0X00
+
+    AMD64CODEDESCRIPTOR:     
+        dw 0xFFFF
+        dw 0x0000
+        db 0x00
+        db 0x9A
+        db 0xAF
+        db 0x00
+
+    AMD64DATADESCRIPTOR:
+        dw 0xFFFF
+        dw 0x0000
+        db 0x00
+        db 0x92
+        db 0xAF
+        db 0x00
 
     CODE_DESCRIPTOR:
         DW 0XFFFF

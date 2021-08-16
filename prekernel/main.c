@@ -1,6 +1,8 @@
 #include "types.h"
 #include "common.h"
 #include "framebuffer.h"
+#include "load_kernel.h"
+#include "paging.h"
 
 void main()
 {
@@ -38,6 +40,27 @@ void main()
         framebuffer_print_nextline("Processor does not support amd64.");
         goto loop;
     }
+
+    framebuffer_print_pflog("Enabling paging");
+    ret = (uint16_t)init_page_tables();
+    framebuffer_print_pflog_pf(ret);
+    if (ret)
+    {
+        framebuffer_print_nextline("Failed to enable paging.");
+        goto loop;
+    }
+
+    framebuffer_print_pflog("Loading kernel image");
+    ret = (uint16_t)init_load_kernel_image();
+    framebuffer_print_pflog_pf(ret);
+    if (ret)
+    {
+        framebuffer_print_nextline("Kernel image load failed.");
+        goto loop;
+    }
+
+    framebuffer_print_pflog("Loading kernel");
+    load_kernel();
 
 loop:
     while (1)

@@ -116,3 +116,21 @@ int init_cpuid_check_amd64_support()
     }
     return 1;
 }
+
+int init_load_kernel_image()
+{
+    uint16_t size_all = *((uint16_t *)0x7C05);
+    uint16_t size_prekernel = *((uint16_t *)0x7C07);
+
+    uint32_t *source_addr = (uint32_t *)(0x10000 + (size_prekernel * 512));
+    uint32_t *dest_addr = (uint32_t *)0x200000;
+
+    for (int i = 0; i < 512 * (size_all - size_prekernel) / 4; i++)
+    {
+        *dest_addr = *source_addr;
+        dest_addr++;
+        source_addr++;
+    }
+
+    return 0;
+}

@@ -4,12 +4,17 @@ LD = ld -T linker_script/script.lds -nostdlib
 
 OBJS =	main.o \
 		common.o \
-		framebuffer.o
+		framebuffer.o \
+		paging.o \
+		load_kernel.o
 
 all: prekernel.bin
 
 entrypoint.bin: entrypoint.S
 	$(NASM) -o $@ $<
+
+%.o: %.S
+	$(NASM) -f elf32 -o $@ $<
 
 %.o: %.c
 	$(GCC) -o $@ $<
