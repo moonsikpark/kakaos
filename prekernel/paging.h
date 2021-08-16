@@ -29,6 +29,5 @@ typedef struct pagetable_entry_t
 } __attribute__((aligned(1), packed)) pagetable_entry_t;
 
 int init_page_tables();
-void init_set_pagetable_entry(pagetable_entry_t *pstEntry, uint32_t upper_baseaddr, uint32_t lower_baseaddr, uint32_t lower_flags, uint32_t upper_flags);
 
 #endif /*__PAGING_H__*/
