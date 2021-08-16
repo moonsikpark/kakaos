@@ -1,0 +1,20 @@
+[BITS 64]
+
+SECTION .text
+
+EXTERN main
+
+START:
+	MOV AX, 0X10
+	MOV DS, AX
+	MOV ES, AX
+	MOV FS, AX
+	MOV GS, AX
+
+	MOV SS, AX
+	MOV RSP, 0X6FFFF8
+	MOV RBP, 0X6FFFF8
+	
+	CALL main
+
+	JMP $

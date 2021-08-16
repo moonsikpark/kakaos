@@ -14,7 +14,14 @@ prekernel/prekernel.bin:
 
 	@echo Prekernel build done.
 
-image: bootloader/bootloader.bin prekernel/prekernel.bin
+kernel/kernel.bin:
+	@echo Building kernel...
+	
+	make -C kernel
+
+	@echo Kernel build done.
+
+image: bootloader/bootloader.bin prekernel/prekernel.bin kernel/kernel.bin
 	@echo Building disk image...
 
 	make -C build
@@ -24,4 +31,5 @@ image: bootloader/bootloader.bin prekernel/prekernel.bin
 clean:
 	make -C bootloader clean
 	make -C prekernel clean
+	make -C kernel clean
 	make -C build clean
