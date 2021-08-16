@@ -1,5 +1,6 @@
 #include "types.h"
 #include "common.h"
+#include "init.h"
 #include "framebuffer.h"
 #include "load_kernel.h"
 #include "paging.h"

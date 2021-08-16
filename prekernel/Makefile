@@ -6,7 +6,8 @@ OBJS =	main.o \
 		common.o \
 		framebuffer.o \
 		paging.o \
-		load_kernel.o
+		load_kernel.o \
+		init.o
 
 all: prekernel.bin
 
