@@ -4,7 +4,8 @@ LD = ld -melf_x86_64 -T linker_script/script.lds -nostdlib
 
 OBJS =	main.o \
 		framebuffer.o \
-		common.o
+		common.o \
+		keyboard.o
 
 all: kernel.bin
 
